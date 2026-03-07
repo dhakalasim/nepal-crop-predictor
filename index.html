@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nepal Crop Predictor</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; }
+        form { display: grid; gap: 10px; }
+        label { font-weight: bold; }
+        input { padding: 8px; }
+        button { padding: 10px; background: #4CAF50; color: white; border: none; cursor: pointer; }
+        #result { margin-top: 20px; font-size: 18px; color: #333; }
+    </style>
+</head>
+<body>
+    <h1>Nepal Crop Predictor</h1>
+    <p>Enter weather and soil details for Nepal's diverse climates (e.g., Kathmandu valleys or mountains).</p>
+    
+    <form id="predictForm">
+        <label>Temperature (°C):</label><input type="number" id="temperature" required>
+        <label>Rainfall (mm):</label><input type="number" id="rainfall" required>
+        <label>Humidity (%):</label><input type="number" id="humidity" required>
+        <label>pH:</label><input type="number" step="0.1" id="pH" required>
+        <label>N (kg/ha):</label><input type="number" id="N" required>
+        <label>P (kg/ha):</label><input type="number" id="P" required>
+        <label>K (kg/ha):</label><input type="number" id="K" required>
+        <label>Altitude (m):</label><input type="number" id="altitude" required>
+        <button type="submit">Predict Crop</button>
+    </form>
+    
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('predictForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                temperature: parseFloat(document.getElementById('temperature').value),
+                rainfall: parseFloat(document.getElementById('rainfall').value),
+                humidity: parseFloat(document.getElementById('humidity').value),
+                pH: parseFloat(document.getElementById('pH').value),
+                N: parseFloat(document.getElementById('N').value),
+                P: parseFloat(document.getElementById('P').value),
+                K: parseFloat(document.getElementById('K').value),
+                altitude: parseFloat(document.getElementById('altitude').value)
+            };
+            
+            try {
+                const response = await fetch('/predict', {  // Change to your deployed URL if not local
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                document.getElementById('result').innerText = `Best crop: ${result.predicted_crop}`;
+            } catch (error) {
+                document.getElementById('result').innerText = 'Error: ' + error.message;
+            }
+        });
+    </script>
+</body>
+</html>
